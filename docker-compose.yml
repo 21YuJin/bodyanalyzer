@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  spring:
+    build: src/main/java/com/fitnessai/bodyanalyzer
+    container_name: spring-server
+    ports:
+      - "8080:8080"
