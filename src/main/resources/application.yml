@@ -16,4 +16,4 @@ server:
   port: 8080
 
 jwt:
-  secret: your-super-secret-jwt-key
+  secret: your-super-secret-jwt-key-super-secret-jwt-key

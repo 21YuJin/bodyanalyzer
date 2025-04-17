@@ -19,7 +19,9 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
 
-    public JwtResponse authenticate(LoginRequest request) {
+    public record AuthResult(String accessToken, String refreshToken, JwtResponse jwtResponse) {}
+
+    public AuthResult authenticate(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
@@ -30,7 +32,7 @@ public class AuthService {
         String accessToken = jwtTokenProvider.generateAccessToken(authentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getUsername());
 
-        return new JwtResponse(accessToken, refreshToken, user.getUsername(), user.getEmail());
+        JwtResponse jwtResponse = new JwtResponse(accessToken, user.getUsername(), user.getEmail());
+        return new AuthResult(accessToken, refreshToken, jwtResponse);
     }
 }
-

@@ -1,10 +1,12 @@
 package com.fitnessai.bodyanalyzer.domain;
 
 import jakarta.persistence.*;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Setter
 @Table(name = "measurements")
 public class Measurement {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

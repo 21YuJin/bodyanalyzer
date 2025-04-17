@@ -2,13 +2,13 @@ package com.fitnessai.bodyanalyzer.controller;
 
 import com.fitnessai.bodyanalyzer.domain.BodyAnalysis;
 import com.fitnessai.bodyanalyzer.dto.AnalysisRequestDto;
+import com.fitnessai.bodyanalyzer.dto.AnalysisResponseDto;
 import com.fitnessai.bodyanalyzer.service.AnalysisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/analysis")
@@ -21,4 +21,25 @@ public class AnalysisController {
         BodyAnalysis analysis = analysisService.saveAnalysis(dto);
         return ResponseEntity.ok(analysis);
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<AnalysisResponseDto>> getByUserId(@PathVariable Long userId) {
+        List<AnalysisResponseDto> analyses = analysisService.getAnalysesByUserId(userId);
+        return ResponseEntity.ok(analyses);
+    }
+
+    @GetMapping("/{analysisId}")
+    public ResponseEntity<AnalysisResponseDto> getById(@PathVariable Long analysisId) {
+        AnalysisResponseDto result = analysisService.getByAnalysisId(analysisId);
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping("/{analysisId}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long analysisId) {
+        analysisService.deleteById(analysisId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
 }
