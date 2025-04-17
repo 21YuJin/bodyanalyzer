@@ -1,7 +1,9 @@
 package com.fitnessai.bodyanalyzer.controller;
 
+import com.fitnessai.bodyanalyzer.domain.User;
 import com.fitnessai.bodyanalyzer.dto.JwtResponse;
 import com.fitnessai.bodyanalyzer.dto.LoginRequest;
+import com.fitnessai.bodyanalyzer.dto.UserDto;
 import com.fitnessai.bodyanalyzer.service.AuthService;
 import com.fitnessai.bodyanalyzer.service.AuthService.AuthResult;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +20,39 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @PostMapping("/register")
+    public ResponseEntity<JwtResponse> register(@RequestBody UserDto dto,
+                                                HttpServletResponse response) {
+        // 회원가입 후 자동 로그인 처리
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail(dto.getEmail());
+        loginRequest.setPassword(dto.getPassword());
+
+        return getJwtResponseResponseEntity(response, loginRequest);
+    }
+
+
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest request,
                                              HttpServletResponse response) {
-        AuthResult result = authService.authenticate(request);
+        return getJwtResponseResponseEntity(response, request);
+    }
 
-        // Refresh Token을 HttpOnly 쿠키로 설정
+    private ResponseEntity<JwtResponse> getJwtResponseResponseEntity(HttpServletResponse response, LoginRequest loginRequest) {
+        AuthResult result = authService.authenticate(loginRequest);
+
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", result.refreshToken())
                 .httpOnly(true)
-                .secure(false) // HTTPS 환경에서는 true 권장
+                .secure(false)
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60) // 7일
-                .sameSite("Strict") // CSRF 방지
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("Strict")
                 .build();
 
         response.addHeader("Set-Cookie", refreshCookie.toString());
+        response.setHeader("Authorization", "Bearer " + result.accessToken());
 
-        // AccessToken만 응답 Body에 반환
         return ResponseEntity.ok(result.jwtResponse());
     }
+
 }

@@ -8,15 +8,12 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Setter
 @Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-
-    @Column(nullable = false, unique = true)
-    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -24,8 +21,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    private String name;
     private String phoneNumber;
+    private String birthDate;
+    private String gender;
+    private Float height;
+    private Float weight;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }
+
