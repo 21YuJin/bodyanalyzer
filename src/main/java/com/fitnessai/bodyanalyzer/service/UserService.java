@@ -3,8 +3,10 @@ package com.fitnessai.bodyanalyzer.service;
 import com.fitnessai.bodyanalyzer.domain.User;
 import com.fitnessai.bodyanalyzer.dto.UserDto;
 import com.fitnessai.bodyanalyzer.dto.UserResponseDto;
+import com.fitnessai.bodyanalyzer.dto.UserUpdateDto;
 import com.fitnessai.bodyanalyzer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,43 +20,39 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Optional<User> findByName(String name) {
-        return userRepository.findByName(name);
-    }
-
-    public UserResponseDto getUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow();
-        return convertToDto(user);
-    }
-
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(this::convertToDto)
                 .toList();
     }
 
-    public UserResponseDto updateUser(Long id, UserDto dto) {
-        User user = userRepository.findById(id).orElseThrow();
+    public User getCurrentAuthenticatedUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email).orElseThrow();
+    }
 
-        if (dto.getName() != null) user.setName(dto.getName());
+    public UserResponseDto getCurrentUser() {
+        return convertToDto(getCurrentAuthenticatedUser());
+    }
+
+    public UserResponseDto updateCurrentUser(UserUpdateDto dto) {
+        User user = getCurrentAuthenticatedUser();
         if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+        if (dto.getPassword() != null) user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        if (dto.getName() != null) user.setName(dto.getName());
         if (dto.getPhoneNumber() != null) user.setPhoneNumber(dto.getPhoneNumber());
         if (dto.getBirthDate() != null) user.setBirthDate(dto.getBirthDate());
         if (dto.getGender() != null) user.setGender(dto.getGender());
         if (dto.getHeight() != null) user.setHeight(dto.getHeight());
         if (dto.getWeight() != null) user.setWeight(dto.getWeight());
-        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-            user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
-
-        User updated = userRepository.save(user);
-        return convertToDto(updated);
+        return convertToDto(userRepository.save(user));
     }
 
-
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteCurrentUser() {
+        User user = getCurrentAuthenticatedUser();
+        userRepository.delete(user);
     }
+
 
     private UserResponseDto convertToDto(User user) {
         return new UserResponseDto(

@@ -22,12 +22,6 @@ public class AnalysisController {
         return ResponseEntity.ok(analysis);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<AnalysisResponseDto>> getByUserId(@PathVariable Long userId) {
-        List<AnalysisResponseDto> analyses = analysisService.getAnalysesByUserId(userId);
-        return ResponseEntity.ok(analyses);
-    }
-
     @GetMapping("/{analysisId}")
     public ResponseEntity<AnalysisResponseDto> getById(@PathVariable Long analysisId) {
         AnalysisResponseDto result = analysisService.getByAnalysisId(analysisId);
@@ -39,7 +33,6 @@ public class AnalysisController {
         analysisService.deleteById(analysisId);
         return ResponseEntity.noContent().build();
     }
-
 
 
 }

@@ -3,6 +3,7 @@ package com.fitnessai.bodyanalyzer.controller;
 import com.fitnessai.bodyanalyzer.domain.User;
 import com.fitnessai.bodyanalyzer.dto.UserDto;
 import com.fitnessai.bodyanalyzer.dto.UserResponseDto;
+import com.fitnessai.bodyanalyzer.dto.UserUpdateDto;
 import com.fitnessai.bodyanalyzer.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,24 +17,25 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
-
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody UserDto dto) {
-        return ResponseEntity.ok(userService.updateUser(id, dto));
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getCurrentUser() {
+        return ResponseEntity.ok(userService.getCurrentUser());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDto> updateCurrentUser(@RequestBody UserUpdateDto dto) {
+        return ResponseEntity.ok(userService.updateCurrentUser(dto));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteCurrentUser() {
+        userService.deleteCurrentUser();
         return ResponseEntity.noContent().build();
     }
+
 }
