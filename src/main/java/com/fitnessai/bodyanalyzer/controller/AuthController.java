@@ -23,6 +23,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<JwtResponse> register(@RequestBody UserDto dto,
                                                 HttpServletResponse response) {
+        authService.registerUser(dto);
+
         // 회원가입 후 자동 로그인 처리
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail(dto.getEmail());
