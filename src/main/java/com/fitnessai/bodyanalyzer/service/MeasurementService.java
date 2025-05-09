@@ -21,7 +21,6 @@ public class MeasurementService {
         measurement.setUser(user);
         measurement.setDirection(dto.getDirection());
         measurement.setKeypoints(dto.getKeypoints());
-        measurement.setScore(dto.getScore());
         return measurementRepository.save(measurement);
     }
 }

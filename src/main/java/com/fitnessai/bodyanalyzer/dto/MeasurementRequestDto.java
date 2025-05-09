@@ -1,11 +1,14 @@
 package com.fitnessai.bodyanalyzer.dto;
 
+import com.fitnessai.bodyanalyzer.enums.ShotDirection;
 import lombok.Data;
 
 @Data
 public class MeasurementRequestDto {
     private Long userId;
-    private String direction;
-    private String keypoints;
-    private Float score;
+    private ShotDirection direction;
+    private String keypoints;     // JSON 문자열
+    private String guideImageUrl; // (선택)
+    private Integer countdown;    // (선택)
 }
+
