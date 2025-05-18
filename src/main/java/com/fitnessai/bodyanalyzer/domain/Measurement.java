@@ -28,5 +28,11 @@ public class Measurement {
     @Column(columnDefinition = "json")
     private String keypoints;
 
+    @Column
+    private String guideImageUrl;
+
+    @Column
+    private Integer countdown;
+
     private LocalDateTime measuredAt = LocalDateTime.now();
 }

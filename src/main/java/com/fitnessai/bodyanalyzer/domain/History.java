@@ -15,8 +15,8 @@ public class History {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "analysis_id", nullable = false)
-    private BodyAnalysis analysis;
+    @JoinColumn(name = "measurement_id", nullable = false)
+    private Measurement measurement;
 
     private String progressNotes;
     private LocalDateTime recordedAt = LocalDateTime.now();
