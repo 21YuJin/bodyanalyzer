@@ -17,3 +17,7 @@ server:
 
 jwt:
   secret: your-super-secret-jwt-key-super-secret-jwt-key
+
+logging:
+  level:
+    org.springframework.security: DEBUG

@@ -1,13 +1,20 @@
 package com.fitnessai.bodyanalyzer.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "history")
 public class History {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id") // DB는 id, 자바는 historyId
     private Long historyId;
 
     @ManyToOne
@@ -19,5 +26,9 @@ public class History {
     private Measurement measurement;
 
     private String progressNotes;
+
+    private Integer score; // 체형 점수 (예: 80/100)
+    private String trend;  // "개선", "유지", "악화"
+
     private LocalDateTime recordedAt = LocalDateTime.now();
 }
