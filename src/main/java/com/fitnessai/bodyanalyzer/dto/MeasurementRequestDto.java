@@ -2,8 +2,10 @@ package com.fitnessai.bodyanalyzer.dto;
 
 import com.fitnessai.bodyanalyzer.enums.ShotDirection;
 import lombok.Data;
+import lombok.Builder;
 
 @Data
+@Builder
 public class MeasurementRequestDto {
     private Long userId;
     private ShotDirection direction;
