@@ -1,11 +1,13 @@
 spring:
   application:
     name: bodyanalyzer
+
   datasource:
     url: jdbc:mysql://localhost:3306/bodyanalyzer?useSSL=false&serverTimezone=Asia/Seoul
     username: root
     password: 1302
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update

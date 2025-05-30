@@ -26,6 +26,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        System.out.println(">>> JwtTokenFilter 진입!");
+        String uri = request.getRequestURI();
+        System.out.println(">>> 요청 URI: " + uri);
+
+        if (uri.startsWith("/actuator")) {
+            System.out.println(">>> actuator 요청이므로 필터 통과시킴");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = resolveToken(request);
         if (token != null && jwtTokenProvider.validateToken(token)) {
             String username = jwtTokenProvider.getUsernameFromToken(token);
