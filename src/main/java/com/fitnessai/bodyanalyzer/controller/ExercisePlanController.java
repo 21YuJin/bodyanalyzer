@@ -17,7 +17,7 @@ public class ExercisePlanController {
 
     @PostMapping("/recommend")
     public ExercisePlanResponseDto recommendByToken(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        Long userId = userDetails.getUser().getUserId();
+        Long userId = userDetails.getUser().getId();
         return exerciseService.generatePlanFromLatestMeasurement(userId);
     }
 

@@ -14,8 +14,8 @@ public class History {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // DB는 id, 자바는 historyId
-    private Long historyId;
+    @Column(name = "history_id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

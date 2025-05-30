@@ -45,13 +45,13 @@ public class ExerciseService {
         exercisePlanRepository.save(plan);
 
         return ExercisePlanResponseDto.builder()
-                .userId(user.getUserId())
+                .userId(user.getId())
                 .recommendedExercises(exercisesJson)
                 .build();
     }
 
     public ExercisePlanResponseDto generatePlanFromLatestMeasurement(Long userId) {
-        Measurement latest = measurementRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
+        Measurement latest = measurementRepository.findTopByUserIdOrderByMeasuredAtDesc(userId)
                 .orElseThrow(() -> new IllegalArgumentException("측정 데이터가 없습니다"));
 
         MeasurementRequestDto dto = MeasurementRequestDto.builder()

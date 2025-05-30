@@ -9,5 +9,5 @@ import java.util.Optional;
 
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
     List<Measurement> findByUser(User user);
-    Optional<Measurement> findTopByUserIdOrderByCreatedAtDesc(Long userId);
+    Optional<Measurement> findTopByUserIdOrderByMeasuredAtDesc(Long userId);
 }

@@ -16,7 +16,8 @@ public class ExercisePlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long planId;
+    @Column(name = "plan_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

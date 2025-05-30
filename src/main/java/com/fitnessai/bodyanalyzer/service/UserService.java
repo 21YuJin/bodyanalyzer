@@ -56,7 +56,7 @@ public class UserService {
 
     private UserResponseDto convertToDto(User user) {
         return new UserResponseDto(
-                user.getUserId(),
+                user.getId(),
                 user.getEmail(),
                 user.getName(),
                 user.getPhoneNumber(),

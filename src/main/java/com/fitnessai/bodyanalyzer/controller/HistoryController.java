@@ -29,7 +29,7 @@ public class HistoryController {
     @GetMapping("/me")
     public ResponseEntity<List<HistoryResponseDto>> getMyHistory(@AuthenticationPrincipal CustomUserDetails userDetails) {
         User user = userDetails.getUser();
-        return ResponseEntity.ok(historyService.getUserHistory(user.getUserId()));
+        return ResponseEntity.ok(historyService.getUserHistory(user.getId()));
     }
 
 }

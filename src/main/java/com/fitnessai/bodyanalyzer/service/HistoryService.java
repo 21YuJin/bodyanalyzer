@@ -41,7 +41,7 @@ public class HistoryService {
     }
 
     public List<HistoryResponseDto> getUserHistory(Long userId) {
-        return historyRepository.findByUserUserId(userId)
+        return historyRepository.findByUserId(userId)
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -49,9 +49,9 @@ public class HistoryService {
 
     private HistoryResponseDto convertToDto(History history) {
         return HistoryResponseDto.builder()
-                .historyId(history.getHistoryId())
-                .userId(history.getUser().getUserId())
-                .measurementId(history.getMeasurement().getMeasurementId())
+                .historyId(history.getId())
+                .userId(history.getUser().getId())
+                .measurementId(history.getMeasurement().getId())
                 .progressNotes(history.getProgressNotes())
                 .score(history.getScore())
                 .trend(history.getTrend())

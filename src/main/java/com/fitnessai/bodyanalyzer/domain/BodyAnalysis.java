@@ -11,8 +11,10 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class BodyAnalysis {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long analysisId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "analysis_id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

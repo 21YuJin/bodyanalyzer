@@ -47,7 +47,7 @@ public class AnalysisService {
 
     private AnalysisResponseDto convertToDto(BodyAnalysis a) {
         return new AnalysisResponseDto(
-                a.getAnalysisId(),
+                a.getId(),
                 a.getKeypoints(),
                 a.getBodyTilt(),
                 a.getHeadRotation(),

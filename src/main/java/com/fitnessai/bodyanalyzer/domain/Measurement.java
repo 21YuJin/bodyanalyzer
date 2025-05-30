@@ -15,7 +15,8 @@ public class Measurement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long measurementId;
+    @Column(name = "measurement_id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
