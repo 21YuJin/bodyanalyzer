@@ -6,12 +6,14 @@ import com.fitnessai.bodyanalyzer.domain.Measurement;
 import com.fitnessai.bodyanalyzer.domain.User;
 import com.fitnessai.bodyanalyzer.dto.MeasurementRequestDto;
 import com.fitnessai.bodyanalyzer.dto.MeasurementResponseDto;
+import com.fitnessai.bodyanalyzer.dto.MeasurementSimpleResponseDto;
 import com.fitnessai.bodyanalyzer.repository.MeasurementRepository;
 import com.fitnessai.bodyanalyzer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -158,4 +160,22 @@ public class MeasurementService {
         };
         return desc[level];
     }
+
+    public List<Measurement> getMeasurementsByUserId(Long userId) {
+        return measurementRepository.findByUserId(userId);
+    }
+
+    public List<MeasurementSimpleResponseDto> getSimpleMeasurementsByUserId(Long userId) {
+        return measurementRepository.findByUserId(userId).stream()
+                .map(m -> MeasurementSimpleResponseDto.builder()
+                        .id(m.getId())
+                        .direction(m.getDirection())
+                        .guideImageUrl(m.getGuideImageUrl())
+                        .countdown(m.getCountdown())
+                        .measuredAt(m.getMeasuredAt())
+                        .build())
+                .toList();
+    }
+
+
 }
