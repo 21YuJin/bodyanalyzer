@@ -15,4 +15,5 @@ public class HistoryResponseDto {
     private Integer score;
     private String trend;
     private LocalDateTime recordedAt;
+    private String direction;
 }

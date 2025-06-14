@@ -2,11 +2,13 @@ package com.fitnessai.bodyanalyzer.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fitnessai.bodyanalyzer.domain.History;
 import com.fitnessai.bodyanalyzer.domain.Measurement;
 import com.fitnessai.bodyanalyzer.domain.User;
 import com.fitnessai.bodyanalyzer.dto.MeasurementRequestDto;
 import com.fitnessai.bodyanalyzer.dto.MeasurementResponseDto;
 import com.fitnessai.bodyanalyzer.dto.MeasurementSimpleResponseDto;
+import com.fitnessai.bodyanalyzer.repository.HistoryRepository;
 import com.fitnessai.bodyanalyzer.repository.MeasurementRepository;
 import com.fitnessai.bodyanalyzer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class MeasurementService {
 
     private final MeasurementRepository measurementRepository;
+    private final HistoryRepository historyRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -38,38 +41,62 @@ public class MeasurementService {
         return measurementRepository.save(measurement);
     }
 
-    public MeasurementResponseDto analyzeMeasurement(MeasurementRequestDto dto) {
+    public MeasurementResponseDto analyzeAndSaveWithHistory(MeasurementRequestDto dto) {
+        // 1. 사용자 조회 및 측정 저장
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + dto.getUserId()));
+
+        Measurement measurement = new Measurement();
+        measurement.setUser(user);
+        measurement.setDirection(dto.getDirection());
+        measurement.setKeypoints(dto.getKeypoints());
+        measurement.setGuideImageUrl(dto.getGuideImageUrl());
+        measurement.setCountdown(dto.getCountdown());
+
+        Measurement saved = measurementRepository.save(measurement);
+
+        // 2. 분석 수행
         Map<String, double[]> keypoints = parseKeypoints(dto.getKeypoints());
 
-        double neckAngle = angleBetweenPoints(keypoints.get("4"), keypoints.get("6"), keypoints.get("12")); // Ear-Shoulder-Hip
-        double pelvisAngle = angleBetweenPoints(keypoints.get("6"), keypoints.get("12"), keypoints.get("14")); // Shoulder-Hip-Knee
-        double shoulderDiff = Math.abs(keypoints.get("5")[1] - keypoints.get("6")[1]) / 10.0; // cm 환산용 (예시)
-        double shoulderAngle = angleBetweenPoints(keypoints.get("6"), keypoints.get("4"), keypoints.get("0")); // Shoulder-Ear-Nose
-        double kneeAngle = angleBetweenPoints(keypoints.get("12"), keypoints.get("14"), keypoints.get("16")); // Hip-Knee-Ankle
+        double neckAngle = angleBetweenPoints(keypoints.get("4"), keypoints.get("6"), keypoints.get("12"));
+        double pelvisAngle = angleBetweenPoints(keypoints.get("6"), keypoints.get("12"), keypoints.get("14"));
+        double shoulderDiff = Math.abs(keypoints.get("5")[1] - keypoints.get("6")[1]) / 10.0;
+        double shoulderAngle = angleBetweenPoints(keypoints.get("6"), keypoints.get("4"), keypoints.get("0"));
+        double kneeAngle = angleBetweenPoints(keypoints.get("12"), keypoints.get("14"), keypoints.get("16"));
 
         Map<String, Integer> levels = new HashMap<>();
         Map<String, String> descriptions = new HashMap<>();
 
         levels.put("거북목", getLevel(neckAngle, "거북목"));
-        descriptions.put("거북목", getDescription(levels.get("거북목"), "거북목"));
-
         levels.put("골반 전방경사", getLevel(pelvisAngle, "골반 전방경사"));
-        descriptions.put("골반 전방경사", getDescription(levels.get("골반 전방경사"), "골반 전방경사"));
-
         levels.put("어깨 비대칭", getLevel(shoulderDiff, "어깨 비대칭"));
-        descriptions.put("어깨 비대칭", getDescription(levels.get("어깨 비대칭"), "어깨 비대칭"));
-
         levels.put("라운드 숄더", getLevel(shoulderAngle, "라운드 숄더"));
-        descriptions.put("라운드 숄더", getDescription(levels.get("라운드 숄더"), "라운드 숄더"));
-
         levels.put("무릎 내반", getLevel(kneeAngle, "무릎 내반"));
-        descriptions.put("무릎 내반", getDescription(levels.get("무릎 내반"), "무릎 내반"));
+
+        levels.forEach((k, v) -> descriptions.put(k, getDescription(v, k)));
+
+        // 3. 자동 히스토리 저장
+        saveAutoHistory(user, saved, levels);
 
         return MeasurementResponseDto.builder()
-                .userId(dto.getUserId())
+                .userId(user.getId())
                 .levels(levels)
                 .descriptions(descriptions)
                 .build();
+    }
+
+    private void saveAutoHistory(User user, Measurement measurement, Map<String, Integer> levels) {
+        int score = (int) levels.values().stream().mapToInt(Integer::intValue).average().orElse(0);
+        String trend = "HOLD"; // 추후 비교 기능 확장 가능
+
+        History history = new History();
+        history.setUser(user);
+        history.setMeasurement(measurement);
+        history.setScore(score);
+        history.setTrend(trend);
+        history.setProgressNotes("자동 분석 결과 기반 기록");
+
+        historyRepository.save(history);
     }
 
     private Map<String, double[]> parseKeypoints(String json) {

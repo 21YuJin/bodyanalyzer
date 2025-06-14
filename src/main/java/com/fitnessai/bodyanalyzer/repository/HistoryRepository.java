@@ -9,4 +9,5 @@ import java.util.List;
 public interface HistoryRepository extends JpaRepository<History, Long> {
     // 유저 ID 기준으로 히스토리 조회
     List<History> findByUserId(Long userId);
+    List<History> findByUserIdOrderByRecordedAtAsc(Long userId);
 }

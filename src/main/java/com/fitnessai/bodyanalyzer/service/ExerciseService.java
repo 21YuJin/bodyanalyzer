@@ -62,7 +62,7 @@ public class ExerciseService {
                 .guideImageUrl(latest.getGuideImageUrl())
                 .build();
 
-        MeasurementResponseDto analysis = measurementService.analyzeMeasurement(dto);
+        MeasurementResponseDto analysis = measurementService.analyzeAndSaveWithHistory(dto);
 
         ExerciseRecommendationDto recDto = ExerciseRecommendationDto.builder()
                 .userId(userId)

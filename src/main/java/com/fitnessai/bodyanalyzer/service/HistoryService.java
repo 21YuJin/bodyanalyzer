@@ -56,6 +56,7 @@ public class HistoryService {
                 .score(history.getScore())
                 .trend(history.getTrend())
                 .recordedAt(history.getRecordedAt())
+                .direction(history.getMeasurement().getDirection().name())
                 .build();
     }
 }

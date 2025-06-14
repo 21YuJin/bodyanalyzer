@@ -25,11 +25,8 @@ public class MeasurementController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody MeasurementRequestDto dto) {
 
-        Long userId = userDetails.getUser().getId();
-        dto.setUserId(userId); // 인증된 사용자 ID를 DTO에 주입
-
-        Measurement saved = measurementService.saveMeasurement(dto);  // 저장
-        MeasurementResponseDto result = measurementService.analyzeMeasurement(dto); // 분석
+        dto.setUserId(userDetails.getUser().getId());
+        MeasurementResponseDto result = measurementService.analyzeAndSaveWithHistory(dto);
         return ResponseEntity.ok(result);
     }
 
